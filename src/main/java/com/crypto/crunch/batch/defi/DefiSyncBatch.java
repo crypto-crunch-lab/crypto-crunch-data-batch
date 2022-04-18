@@ -28,9 +28,9 @@ public class DefiSyncBatch {
     public DefiSyncService defiSyncService;
 
     @Bean
-    public Job rCaptchaBatchJob(Step rCaptchaBatchStep) {
+    public Job defiSyncBatchJob(Step defiSyncBatchStep) {
         return jobBuilderFactory.get("defiSyncBatchJob")
-                .flow(rCaptchaBatchStep)
+                .flow(defiSyncBatchStep)
                 .end().build();
     }
 
