@@ -16,3 +16,19 @@ elasticsearch:
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 500
+        readTimeout: 3000
+        loggerLevel: basic
+      coinDixApiClient:
+        connectTimeout: 500
+        readTimeout: 2000
+        loggerLevel: basic
+
+coinDixApiClient:
+  ribbon:
+    listOfServers: api.coindix.com

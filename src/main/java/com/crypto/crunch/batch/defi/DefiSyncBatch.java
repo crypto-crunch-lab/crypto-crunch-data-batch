@@ -25,7 +25,7 @@ public class DefiSyncBatch {
     public StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    public DefiSyncService defiSyncService;
+    public DefiSyncServiceImpl defiSyncService;
 
     @Bean
     public Job defiSyncBatchJob(Step defiSyncBatchStep) {
@@ -35,7 +35,7 @@ public class DefiSyncBatch {
     }
 
     @Bean
-    public Step defiSyncBatchStep(DefiSyncService defiSyncService) {
+    public Step defiSyncBatchStep(DefiSyncServiceImpl defiSyncService) {
         return stepBuilderFactory.get("defiSyncBatchStep")
                 .tasklet((contribution, chunkContext) -> {
                     try {
