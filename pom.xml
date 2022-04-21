@@ -11,7 +11,7 @@
     <groupId>com.crypto.crunch</groupId>
     <artifactId>batch</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>crpyto-crunch-data-batch</name>
+    <name>crypto-crunch-data-batch</name>
     <description>Crypto Crunch Data Batch</description>
     <properties>
         <java.version>1.8</java.version>

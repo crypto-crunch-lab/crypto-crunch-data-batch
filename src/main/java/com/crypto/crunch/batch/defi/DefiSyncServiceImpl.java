@@ -49,7 +49,6 @@ public class DefiSyncServiceImpl implements DefiSyncService {
         }
         log.info("total count: {}", defiList.size());
 
-
         BulkRequest bulkRequest = new BulkRequest();
 
         for (Defi defi : defiList) {
@@ -59,12 +58,11 @@ public class DefiSyncServiceImpl implements DefiSyncService {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-
             bulkRequest.add(indexRequest);
         }
 
-        BulkResponse bulkResponse = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
-        log.info(bulkResponse.toString());
+        BulkResponse response = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+        log.info(response.toString());
     }
 
     private Defi mapToDefi(CoinDixDefi coinDixDefi) {

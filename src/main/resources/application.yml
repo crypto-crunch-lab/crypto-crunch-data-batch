@@ -31,4 +31,4 @@ feign:
 
 coinDixApiClient:
   ribbon:
-    listOfServers: api.coindix.com
+    listOfServers: api.coindix.com:443
