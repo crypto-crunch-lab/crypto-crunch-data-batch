@@ -3,7 +3,7 @@ server:
 
 spring:
   redis:
-    host: crpyto-crunch-redis-001.mzagiz.0001.apn2.cache.amazonaws.com
+    host: crpyto-crunch-redis.mzagiz.ng.0001.apn2.cache.amazonaws.com
     port: 6379
 
 elasticsearch:
