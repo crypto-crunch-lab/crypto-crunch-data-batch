@@ -1,8 +1,8 @@
 package com.crypto.crunch.batch.defi;
 
-import com.crypto.crunch.batch.defi.model.CoinDixApiResponse;
-import com.crypto.crunch.batch.defi.model.CoinDixDefi;
-import com.crypto.crunch.batch.defi.model.Defi;
+import com.crypto.crunch.batch.common.feign.client.CoinDixApiClient;
+import com.crypto.crunch.batch.common.feign.client.CoreApiClient;
+import com.crypto.crunch.batch.defi.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,12 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,11 +30,13 @@ public class DefiSyncServiceImpl implements DefiSyncService {
     private final CoinDixApiClient coinDixApiClient;
     private final RestHighLevelClient restHighLevelClient;
     private final ObjectMapper objectMapper;
+    private final CoreApiClient coreApiClient;
 
-    public DefiSyncServiceImpl(CoinDixApiClient coinDixApiClient, RestHighLevelClient restHighLevelClient, ObjectMapper objectMapper) {
+    public DefiSyncServiceImpl(CoinDixApiClient coinDixApiClient, RestHighLevelClient restHighLevelClient, ObjectMapper objectMapper, CoreApiClient coreApiClient) {
         this.coinDixApiClient = coinDixApiClient;
         this.restHighLevelClient = restHighLevelClient;
         this.objectMapper = objectMapper;
+        this.coreApiClient = coreApiClient;
     }
 
     @Override
@@ -76,8 +82,27 @@ public class DefiSyncServiceImpl implements DefiSyncService {
                 .apy(coinDixDefi.getApy())
                 .tvl(coinDixDefi.getTvl())
                 .risk(coinDixDefi.getRisk())
-                .icon(coinDixDefi.getIcon())
-                .link(coinDixDefi.getLink())
+                .defiIconUrl(coinDixDefi.getIcon())
+                .detailUrl(coinDixDefi.getLink())
                 .build();
+    }
+
+    private String getDefiIconUrl(String id, String url) {
+        try {
+            BufferedImage image = ImageIO.read(new URL("https://crypto-crunch-static.s3.ap-northeast-2.amazonaws.com/image/icon/defi/" + id + ".png"));
+            if (!ObjectUtils.isEmpty(image)) {
+                return "https://crypto-crunch-static.s3.ap-northeast-2.amazonaws.com/image/icon/defi/" + id + ".png";
+            }
+        } catch (IOException e) {
+            log.info("image file not exist");
+        }
+
+        ImageUploadRequest request = new ImageUploadRequest();
+        request.setUrl(url);
+        request.setUploadType(ImageConf.ImageUploadType.URL);
+        request.setDirName("image/icon/defi");
+        request.setFileName(id + ".png");
+
+        return coreApiClient.uploadImage(request).getBody();
     }
 }
