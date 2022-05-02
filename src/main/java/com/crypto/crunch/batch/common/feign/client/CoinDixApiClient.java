@@ -1,4 +1,4 @@
-package com.crypto.crunch.batch.defi;
+package com.crypto.crunch.batch.common.feign.client;
 
 import com.crypto.crunch.batch.defi.model.CoinDixApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;

@@ -6,8 +6,10 @@ import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.Assert;
 
+@ActiveProfiles("local")
 @Slf4j
 @SpringBootTest
 public class DefiSyncBatchTest {
