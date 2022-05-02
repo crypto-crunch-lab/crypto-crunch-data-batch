@@ -1,14 +1,15 @@
 package com.crypto.crunch.batch.defi.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Defi {
     private String id;
     private String name;
@@ -22,4 +23,7 @@ public class Defi {
     private String defiIconUrl;
     private String platformIconUrl;
     private String detailUrl;
+    private DefiConf.DefiCoinType coinType;
+    private List<DefiConf.DefiAttributeType> attributes;
+    private List<DefiHistory> histories;
 }

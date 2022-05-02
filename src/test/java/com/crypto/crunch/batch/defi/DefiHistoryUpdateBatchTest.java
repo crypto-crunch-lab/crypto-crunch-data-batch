@@ -12,20 +12,20 @@ import org.springframework.util.Assert;
 @ActiveProfiles("test")
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class DefiSyncBatchTest {
+public class DefiHistoryUpdateBatchTest {
     @Autowired
-    Job defiSyncBatchJob;
+    Job defiHistoryUpdateBatchJob;
 
     @Autowired
     JobLauncher jobLauncher;
 
     @Test
-    void defiSyncBatchStep() throws Exception {
+    void defiHistoryUpdateBatchStep() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("param", "paramTest")
                 .toJobParameters();
 
-        JobExecution jobExecution = jobLauncher.run(defiSyncBatchJob, jobParameters);
+        JobExecution jobExecution = jobLauncher.run(defiHistoryUpdateBatchJob, jobParameters);
 
         Assert.isTrue(jobExecution.getExitStatus().equals(ExitStatus.COMPLETED), "");
     }
