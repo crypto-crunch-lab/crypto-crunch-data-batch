@@ -1,5 +1,6 @@
 package com.crypto.crunch.batch.defi.model;
 
+import com.crypto.crunch.batch.defi.conf.ImageConf;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
