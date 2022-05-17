@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -48,6 +49,8 @@ public class DefiHistoryUpdateServiceImpl implements DefiHistoryUpdateService {
 
     @Override
     public void updateSeries() throws IOException {
+        String now = DateTime.now().toString(YMDT_TIME_FORMAT);
+
         SearchRequest searchRequest = new SearchRequest(DEFI_INDEX);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchAllQuery());
@@ -105,7 +108,7 @@ public class DefiHistoryUpdateServiceImpl implements DefiHistoryUpdateService {
                             tvlSeries.setCount(tvlHistories.size());
                             defi.setTvlSeries(tvlSeries);
 
-                            defi.setHistoryUpdateYmdt(DateTime.now().toString(YMDT_TIME_FORMAT));
+                            defi.setHistoryUpdateYmdt(now);
                             return defi;
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
@@ -118,10 +121,11 @@ public class DefiHistoryUpdateServiceImpl implements DefiHistoryUpdateService {
                 })
                 .collect(Collectors.toList());
 
+        log.info("update count: {}", defiList.size());
         for (Defi defi : defiList) {
             UpdateRequest updateRequest = new UpdateRequest(DEFI_INDEX, defi.getId());
             updateRequest.doc(objectMapper.writeValueAsString(defi), XContentType.JSON);
-            restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
+            UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
         }
     }
 }
