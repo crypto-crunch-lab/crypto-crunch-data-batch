@@ -14,7 +14,7 @@ import java.util.List;
 public class Defi {
     private String id;          // 디파이 고유번호
     private String name;        // 디파이 이름
-    private String platform;    // 플랫폼
+    private DefiPlatform platform;  // 디파이 플랫폼
     private String network;     // 네트워크
     private Double base;        // base
     private Double reward;      // reword
@@ -24,8 +24,7 @@ public class Defi {
     private String defiIconUrl;         // 디파이 아이콘 url
     private String platformIconUrl;     // 플랫폼 아이콘 url
     private String detailUrl;           // 코인딕스 상세 페이지
-    private DefiConf.DefiCoinType coinType;
-    private List<DefiConf.DefiAttributeType> attributes;
+    private List<DefiConf.DefiCoinType> coinTypes;
     private DefiSeries<Double> apySeries;    // 차트용 히스토리
     private DefiSeries<Long> tvlSeries;    // 차트용 히스토리
     private String syncYmdt;    // 싱크 일시(yyyy-MM-dd'T'HH:mm:ssZ)
