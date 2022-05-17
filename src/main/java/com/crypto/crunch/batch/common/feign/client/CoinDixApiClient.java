@@ -13,6 +13,9 @@ public interface CoinDixApiClient {
     @GetMapping("/search?sort=-tvl")
     CoinDixApiResponse getList(@RequestParam("page") int page);
 
+    @GetMapping("/search?sort=-tvl")
+    CoinDixApiResponse getListByCoinType(@RequestParam("kind") String kind, @RequestParam("page") int page);
+
     @GetMapping("/vaults/{id}")
     Map<String, Object> getSeries(@RequestHeader("Authorization") String headers, @PathVariable("id") String id, @RequestParam("period") int period);
 }
