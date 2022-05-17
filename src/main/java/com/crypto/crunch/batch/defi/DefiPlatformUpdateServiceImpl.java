@@ -10,6 +10,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -45,6 +46,7 @@ public class DefiPlatformUpdateServiceImpl implements DefiPlatformUpdateService 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchAllQuery());
         searchSourceBuilder.size(5000);
+        searchSourceBuilder.fetchSource(null, new String[]{"apySeries", "tvlSeries"});
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 
@@ -74,13 +76,15 @@ public class DefiPlatformUpdateServiceImpl implements DefiPlatformUpdateService 
             IndexRequest indexRequest = new IndexRequest(DEFI_PLATFORM_INDEX).id(platform.getId());
             indexRequest.source(objectMapper.writeValueAsString(platform), XContentType.JSON);
             IndexResponse indexResponse = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
-            log.info(indexResponse.toString());
+            log.info("create defi platform index, platform: {}", platform.toString());
         }
+
+        log.info("update count: {}", defiList.size());
 
         for (Defi defi : defiList) {
             UpdateRequest updateRequest = new UpdateRequest(DEFI_INDEX, defi.getId());
             updateRequest.doc(objectMapper.writeValueAsString(defi), XContentType.JSON);
-            restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
+            UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
         }
     }
 

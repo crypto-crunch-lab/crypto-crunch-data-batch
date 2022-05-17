@@ -65,31 +65,40 @@ public class DefiSyncServiceImpl implements DefiSyncService {
 
     @Override
     public void sync() throws IOException {
+        String now = DateTime.now().toString(YMDT_TIME_FORMAT);
         this.initializeListMap();
 
         List<Defi> defiList = this.getList();
+
+        int createCount = 0;
+        int updateCount = 0;
         BulkRequest bulkRequest = new BulkRequest();
         for (Defi defi : defiList) {
-
             GetRequest getRequest = new GetRequest(DEFI_INDEX, defi.getId());
             GetResponse getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
             if (getResponse.isExists()) {
-                defi.setUpdateYmdt(DateTime.now().toString(YMDT_TIME_FORMAT));
+                defi.setUpdateYmdt(now);
 
                 UpdateRequest updateRequest = new UpdateRequest(DEFI_INDEX, defi.getId());
                 updateRequest.doc(objectMapper.writeValueAsString(defi), XContentType.JSON);
                 bulkRequest.add(updateRequest);
+                updateCount++;
             } else {
-                defi.setSyncYmdt(DateTime.now().toString(YMDT_TIME_FORMAT));
-                defi.setUpdateYmdt(DateTime.now().toString(YMDT_TIME_FORMAT));
+                defi.setSyncYmdt(now);
+                defi.setUpdateYmdt(now);
 
                 IndexRequest indexRequest = new IndexRequest(DEFI_INDEX).id(defi.getId());
                 indexRequest.source(objectMapper.writeValueAsString(defi), XContentType.JSON);
                 bulkRequest.add(indexRequest);
+                createCount++;
             }
         }
+        log.info("update count: {}", updateCount);
+        log.info("create count: {}", createCount);
         BulkResponse bulkResponse = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
-        log.info(bulkResponse.toString());
+        if (bulkResponse.hasFailures()) {
+            log.debug("bulk fail, bulkResponse: {}", bulkResponse.toString());
+        }
     }
 
     private void initializeListMap() {
@@ -193,7 +202,7 @@ public class DefiSyncServiceImpl implements DefiSyncService {
                 break;
             }
         }
-        log.info("total count: {}", defiList.size());
+        log.info("defiList count: {}", defiList.size());
         return defiList;
     }
 
@@ -214,7 +223,6 @@ public class DefiSyncServiceImpl implements DefiSyncService {
                 break;
             }
         }
-        log.info("total count: {}", defiList.size());
         return defiList;
     }
 
