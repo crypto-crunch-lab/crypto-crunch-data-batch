@@ -123,6 +123,8 @@ public class DefiSyncServiceImpl implements DefiSyncService {
                     .defiIconUrl(coinDixDefi.getIcon())
                     .detailUrl(coinDixDefi.getLink())
                     .coinTypes(this.getCoinTypes(coinDixDefi.getId()))
+                    .isService(true)
+                    .isRecommend(false)
                     .build();
         } catch (IOException e) {
             e.printStackTrace();
