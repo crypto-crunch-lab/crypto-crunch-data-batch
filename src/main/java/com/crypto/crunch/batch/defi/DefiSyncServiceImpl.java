@@ -86,6 +86,8 @@ public class DefiSyncServiceImpl implements DefiSyncService {
             } else {
                 defi.setSyncYmdt(now);
                 defi.setUpdateYmdt(now);
+                defi.setIsService(true);
+                defi.setIsRecommend(false);
 
                 IndexRequest indexRequest = new IndexRequest(DEFI_INDEX).id(defi.getId());
                 indexRequest.source(objectMapper.writeValueAsString(defi), XContentType.JSON);
@@ -123,8 +125,6 @@ public class DefiSyncServiceImpl implements DefiSyncService {
                     .defiIconUrl(coinDixDefi.getIcon())
                     .detailUrl(coinDixDefi.getLink())
                     .coinTypes(this.getCoinTypes(coinDixDefi.getId()))
-                    .isService(true)
-                    .isRecommend(false)
                     .build();
         } catch (IOException e) {
             e.printStackTrace();
