@@ -1,7 +1,9 @@
 package com.crypto.crunch.batch.defi;
 
 import com.crypto.crunch.batch.defi.model.Defi;
+import com.crypto.crunch.batch.defi.model.DefiNetwork;
 import com.crypto.crunch.batch.defi.model.DefiPlatform;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -84,6 +86,34 @@ public class DefiPlatformUpdateServiceImpl implements DefiPlatformUpdateService 
         for (Defi defi : defiList) {
             UpdateRequest updateRequest = new UpdateRequest(DEFI_INDEX, defi.getId());
             updateRequest.doc(objectMapper.writeValueAsString(defi), XContentType.JSON);
+            UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
+        }
+    }
+
+    public void updateImageUrl() throws IOException {
+        SearchRequest request = new SearchRequest(DEFI_PLATFORM_INDEX);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.size(5000);
+        request.source(searchSourceBuilder);
+        SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+
+        List<DefiPlatform> platformList = Stream.of(response.getHits().getHits())
+                .map(SearchHit::getSourceAsString)
+                .map(str -> {
+                    try {
+                        DefiPlatform platform = objectMapper.readValue(str, DefiPlatform.class);
+                        platform.setPlatformIconUrl(String.format("https://coindix.com/img/protocols/%s.svg", platform.getName().toLowerCase()));
+                        return platform;
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList());
+
+        for (DefiPlatform platform : platformList) {
+            UpdateRequest updateRequest = new UpdateRequest(DEFI_PLATFORM_INDEX, platform.getId());
+            updateRequest.doc(objectMapper.writeValueAsString(platform), XContentType.JSON);
             UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
         }
     }

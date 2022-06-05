@@ -116,7 +116,7 @@ public class DefiSyncServiceImpl implements DefiSyncService {
                     .id(coinDixDefi.getId())
                     .name(coinDixDefi.getName())
                     .platform(this.getPlatform(coinDixDefi.getProtocol()))
-                    .network(coinDixDefi.getChain())
+                    .network(DefiNetwork.builder().name(coinDixDefi.getChain()).networkIconUrl(String.format("https://coindix.com/img/chains/%s.svg", coinDixDefi.getChain().toLowerCase())).build())
                     .base(coinDixDefi.getBase())
                     .reward(coinDixDefi.getReward())
                     .apy(coinDixDefi.getApy())
