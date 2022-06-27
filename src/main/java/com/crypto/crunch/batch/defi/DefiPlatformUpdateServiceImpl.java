@@ -102,7 +102,7 @@ public class DefiPlatformUpdateServiceImpl implements DefiPlatformUpdateService 
                 .map(str -> {
                     try {
                         DefiPlatform platform = objectMapper.readValue(str, DefiPlatform.class);
-                        platform.setPlatformIconUrl(String.format("https://coindix.com/img/protocols/%s.svg", platform.getName().toLowerCase()));
+                        platform.setPlatformIconUrl(String.format("https://coindix.com/img/protocols/%s.svg", platform.getName().replaceFirst(" ", "").toLowerCase()));
                         return platform;
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
